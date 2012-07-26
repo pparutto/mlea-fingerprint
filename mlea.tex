@@ -2,8 +2,32 @@
 \usepackage[francais]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+
 \usepackage{amssymb}
+\usepackage{stmaryrd}
+
 \usepackage{graphicx}
+\usepackage{subfig}
+
+\makeatletter
+\newcommand{\Spvek}[2][r]{%
+  \gdef\@VORNE{1}
+  \left(\hskip-\arraycolsep%
+    \begin{array}{#1}\vekSp@lten{#2}\end{array}%
+  \hskip-\arraycolsep\right)}
+
+\def\vekSp@lten#1{\xvekSp@lten#1;vekL@stLine;}
+\def\vekL@stLine{vekL@stLine}
+\def\xvekSp@lten#1;{\def\temp{#1}%
+  \ifx\temp\vekL@stLine
+  \else
+    \ifnum\@VORNE=1\gdef\@VORNE{0}
+    \else\@arraycr\fi%
+    #1%
+    \expandafter\xvekSp@lten
+  \fi}
+\makeatother
+
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 \bibliographystyle{unsrt}
 \begin{document}
@@ -71,10 +95,214 @@ Les minutiaes sont classés en divers types selon leurs spécification
 et leurs formes géométrique et la typologies des lignes des
 empreintes. L'A.N.S.I. (pour American Natiional Standards Insitute)
 
+\section{Comparaison des minutiae}
+
+Dans cette étape, on considère en entré deux ensembles: $p =
+\{x_{i}^{p}, y_{i}^{p}, \theta_{i}^{p}\}, i \in \llbracket 1, M
+\rrbracket$ et $q = \{x_{j}^{q}, y_{j}^{q}, \theta_{j}^{q}\}, j \in
+\llbracket 1, N \rrbracket$ qui représentent les minutiae extraites de
+chacune des images à comparer. La comparaison entre les deux
+empreintes digitales se ramène ainsi à compter le nombre de paires de
+minutiae identiques dans les deux ensembles et à comparer cette valeur
+à un certain seuil. Cette comparaison se fait en deux étapes:
+
+\begin{enumerate}
+\item Trouver un alignement optimal;
+\item Calculer la similarité.
+\end{enumerate}
+
+Pour chacune des ces étapes il existe plusieurs méthodes. Celle
+présentée ci-dessous est tirée du cours~\cite{finger.00.jain} et les
+illustration sont celles présentes dedans.
+
+\subsection{Alignement}
+
+Le problème d'alignement entre deux ensembles de minutiae est
+compliqué car on ne sait pas à l'avance la correspondance entre les
+minutiae des deux ensembles. De plus à cause des déformations dues au
+bruit ajouté par les capteurs lors de l'acquisition des empreintes, il
+est impossible de trouver un alignement exact. De ce fait l'alignement
+entre les deux ensembles se fait en appliquant des déformations à l'un
+jusqu'à minimiser la distance entre les deux ensembles. Ces
+déformations sont de deux types: translations et rotations.\\
+
+Plus précisément, le repère pour l'alignement sont les crêtes
+représentées par des signaux en 1-dimension. L'algorithme d'alignement
+prend en entré deux ensembles de crêtes venant de chacune des images:
+$R_p$ et $R_q$ et se déroule comme suit:
+
+\begin{enumerate}
+\item Prendre une paire de crêtes: $c \in R_p$ et $c' \in R_q$ et les
+  comparer utilisant la formule:
+$$S = \frac{\sum\limits_{i=0}^L c_i c'_i}{\sqrt{\sum\limits_{i=0}^{L} c_{i}^2 c_{i}^{'2} }}$$
+Avec:
+\begin{itemize}
+\item $L$: la taille de la plus petite crête
+\item $c_i$: la distance du point $i$ de la crête $c$ à l'axe des abscisse
+\item $c'_i$: la distance du point $i$ de la crête $c'$ à l'axe des abscisse
+\end{itemize}
+\item Si $S > seuil$ alors l'alignement est terminé.
+\item Sinon:
+  \begin{itemize}
+  \item Calculer le vecteurs de translation:
+    $$\Spvek{\Delta x \\ \Delta y} =  \Spvek{x_p \\ y_p} - \Spvek{x_q \\ y_q}$$
+  \item Puis le vecteur de rotation:
+    $$\Delta \theta  = \frac{1}{L} \sum\limits_{i = 0}^L (\varphi_i - \psi_i)$$
+    avec $\varphi_i$ et $\psi_i$ les angles radiaux entre le $i^{ème}$
+    point et la minutia de référence.
+  \item Enfin appliquer la transformation suivante sur la minutiae:
+    $$\Spvek{x_i \\  y_i \\ \theta_i} = \Spvek{\Delta x \\ \Delta y \\ \Delta \theta} +
+    \left (
+      \begin{array}{ccc}
+        cos \Delta \theta & sin \Delta \theta & 0\\
+        sin \Delta \theta & -cos \Delta \theta & 0\\
+        0 & 0 & 1
+      \end{array}
+    \right )
+    \Spvek{x_i - x_p \\ y_i - y_p \\ \theta_i - \theta_p}$$
+  \end{itemize}
+\item Recommencer à l'étape 1 avec une nouvelle paire de crêtes.
+\end{enumerate}
+
+Une fois que cette étape d'alignement est finie, l'alignement entre
+les deux images est optimale et le calcul de similarité peut être
+effectué.
+
+\subsection{Calcul de similarité}
+
+Une méthode pour calculer la similarité entre deux ensemble de
+minutiae consiste à les considérer comme des chaînes de caractères et
+appliquer un algorithme de calcul de distance d'édition sur les deux
+chaînes.\\
+
+La conversion des ensembles de minutiae en chaînes de caractères se
+fait de la manière suivante: les coordonnées sont converties en
+coordonnées polaires en fonction d'une minutiae de référence
+choisie. Puis concaténer le résultat pour chaque minutiae par ordre
+croissant d'angle radial:
+$$P_p = \{(r_{1}^p, e_{i}^p, \theta_{1}^p), \ldots, (r_{M}^p, e_{M}^p, \theta_{M}^p)\}$$
+$$Q_p = \{(r_{1}^q, e_{i}^q, \theta_{1}^q), \ldots, (r_{N}^q, e_{N}^q, \theta_{N}^q)\}$$
+
+où $P$ et $Q$ sont donc deux chaînes de caractères.\\
+
+La distance d'édition se calcule en utilisant un algorithme similaire
+à celui de Levenshtein utilisant la programmation dynamique pour
+remplir la matrice $C$:
+
+$$C(m,n) = \left \{
+\begin{array}{ll}
+  0 & \mbox{ si } m = 0 \land n = 0\\
+  min \left \{
+      \begin{array}{l}
+        C(m - 1, n) + \Omega\\
+        C(m, n - 1) + \Omega\\
+        C(m - 1, n - 1) + w(m, n)
+      \end{array}  \right . & \mbox {sinon } 
+\end{array} \right .
+$$
+
+Avec:
+
+\begin{itemize}
+\item $m \in \llbracket 0, M \rrbracket$ et $n \in \llbracket 0, N \rrbracket$
+\item $w(m,n) = \left \{
+    \begin{array}{ll}
+      \alpha \mid r_{m}^p - r_{n}^q \mid + \beta \Delta e + \gamma \Delta \theta & \mbox { si } \mid r_{m}^p - r_{n}^q \mid < \delta \land \Delta e < \epsilon \land \Delta \theta < \rho \\
+      \Omega & \mbox{ sinon}
+    \end{array} \right .$
+\item $\Delta e = \left \{
+    \begin{array}{ll}
+      a & \mbox { si } (a = (e_{m}^p - e_{n}^q + 360) \mbox{ mod } 360) < 180\\
+      a - 180 & \mbox { sinon }
+    \end{array} \right . $
+\item $\Delta \theta = \left \{
+    \begin{array}{ll}
+      a & \mbox { si } (a = (\theta_{m}^p - \theta_{n}^q + 360) \mbox{ mod } 360) < 180\\
+      a - 180 & \mbox { sinon }
+    \end{array} \right . $
+\end{itemize}
+
+Et la signification des constante est la suivante:
+\begin{itemize}
+\item $\alpha$, $\beta$, $\gamma$ sont les poids associés au rayon,
+  angle radial et orientation;
+\item $\delta$, $\epsilon$, $\rho$ représentent la bounding-box;
+\item $\Omega$ est une pénalité de différence fixé.
+\end{itemize}
+
+L'image~\ref{fig:match} présente un exemple graphique des résultats de
+la méthode présenté.
+
+\begin{figure}
+  \centering\includegraphics[scale=.4]{figres.png}
+  \caption{Un exemple d'utilisation de la méthode.}
+  \label{fig:match}
+\end{figure}
+
+La distance d'édition ainsi calculée est appelée $M_{pq}$ et permet de
+calculer le score de similarité $S$ via la formule:
+$$S = \frac{100 (M_{pq})^2}{MN}$$
+
+La présentation donnée de l'algorithme possède quelque limitations, en
+effet il tolère bien des transformations inexactes et/ou non linéaires
+mais ne peut pas les compenser. Pour cela il faudrait utiliser la
+méthode des bounding-box adaptative permettant une meilleur
+correspondance entre les bounding box.\\
+
+La complexité de l'algorithme de Levenshtein est avec l'implémentation
+classique en $O(NM)$ avec $N$ et $M$ les tailles des deux
+chaînes. Cependant un fort surcoût apparaît à cause du calcul des
+différents poids et notamment de w. L'image~\ref{fig:recap} présente un schéma
+récapitulatif de la méthode.
+
+\begin{figure}
+  \hspace{-10em}
+  \includegraphics[scale=.6]{figrecap.png}
+  \caption{Graphique récapitulant les grandes étapes de la méthode.}
+  \label{fig:recap}
+\end{figure}
+
+\subsection{Performances}
+
+En ce qui est des performance, cette méthode a été testé par les
+auteurs de la présentation sur la base de données FVC2002 1. Cette
+base contient 100 utilisateur avec chacun 8 empreintes.
+
+Les résultats de la méthode sur cette base sont les suivants:
+\begin{itemize}
+\item Taux de fausses alarmes (FAR) : 0.1%
+\item Taux de vrai acceptation (GAR) : 97.6%
+\item Taux à erreurs égales (EER) : 1.65%
+\item Taux de fausse acceptation (FRR) : 4%
+\end{itemize}
+
+De plus les courbes présentées dans l'image~\ref{fig:res} montrent
+deux autres indicateurs. A titre de comparaison, l'algorithme donnant
+les meilleur résultats sur cette base de donnée est PA15 et ses scores
+sont les suivants:
+
+\begin{itemize}
+\item FAR : 0.11%
+\item GAR : 100% 
+\item EER : 0.1%
+\item FRR : 0%
+\end{itemize}
+
+On se rend donc compte que cette méthode donne des résultats très
+satisfaisant et est proche de la meilleur méthode. Un paramètre que
+nous n'avons pas réussi à trouver est le temps que met la méthodes
+pour donner un résultat donc nous ne pouvons pas comparer ce critère.
+
+\begin{figure}
+  \centering\subfloat[Distribution des similaritées]{\hspace{-10em}\includegraphics[scale=.5]{matchscore.png}}
+  \centering\subfloat[Courbe ROC]{\includegraphics[scale=.5]{roccurve.png}}
+  \caption{Deux autres indicateurs}
+  \label{fig:res}
+\end{figure}
+
+
 \chapter{Conclusion}
 
 \bibliography{mlea}
-
-
 
 \end{document}
