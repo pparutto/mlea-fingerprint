@@ -1,6 +1,6 @@
 all: mlea.pdf
 
-mlea.pdf: mlea.tex
+mlea.pdf: mlea.tex src/*.tex
 	if which latexmk;                              \
 	then						                               \
     latexmk -pdf mlea.tex;			                 \
