@@ -142,9 +142,11 @@ digitale. De plus, on ignore tous les minutiaes et pas seulement les
 terminaisons : cette parties de l'image produit beaucoup trop de faux
 positif pour chercher à savoir si la minutiae en est une.
 
-Le deuxième problème majeur est le regroupement de minutiaes.
-
-
+Le deuxième problème majeur est le regroupement de minutiaes. En
+effet, il est rare d'avoir deux minutiaes plus proche que deux lignes
+côte à côte. Dans ce cas, on ignore toutes les minutiaes plus proche
+que deux lignes locales aux minutiaes. Ce rapprochement est souvent
+dû à des erreurs lors de l'acquisition de l'empreinte digitale.
 
 \section{Comparaison des minutiaes}
 
