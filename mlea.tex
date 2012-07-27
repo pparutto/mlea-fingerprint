@@ -178,7 +178,6 @@ est impossible de trouver un alignement exact. De ce fait l'alignement
 entre les deux ensembles se fait en appliquant des déformations à l'un
 jusqu'à minimiser la distance entre les deux ensembles. Ces
 déformations sont de deux types: translations et rotations.\\
-%% FIXME: @Pierre:Il y a aussi l'élasticité de la peau qui rentre en jeux.
 Plus précisément, le repère pour l'alignement sont les crêtes
 représentées par des signaux en 1-dimension. L'algorithme d'alignement
 prend en entré deux ensembles de crêtes venant de chacune des images:
@@ -234,15 +233,15 @@ coordonnées polaires en fonction d'une minutiae de référence
 choisie. Puis concaténer le résultat pour chaque minutiae par ordre
 croissant d'angle radial :
 $$P_p = \{(r_{1}^p, e_{i}^p, \theta_{1}^p), \ldots, (r_{M}^p, e_{M}^p, \theta_{M}^p)\}$$
-$$Q_p = \{(r_{1}^q, e_{i}^q, \theta_{1}^q), \ldots, (r_{N}^q, e_{N}^q, \theta_{N}^q)\}$$
+$$Q_q = \{(r_{1}^q, e_{i}^q, \theta_{1}^q), \ldots, (r_{N}^q, e_{N}^q, \theta_{N}^q)\}$$
 
-où $P$ et $Q$ sont donc deux chaînes de caractères.\\
-% FIXME: @Pierre : Tu ne veux pas dire $P_p$ et $Q_p$ ?
+où $P_p$ et $Q_p$ sont donc deux chaînes de caractères.\\
+
 La distance d'édition se calcule en utilisant un algorithme similaire
 à celui de Levenshtein utilisant la programmation dynamique pour
-remplir la matrice $C$ :
-% FIXME: @Pierre : Pourquoi tu parles de programmation dynamique ? Si
-% tu as une raison pourquoi parler de matrice (on utilises seulement un vecteur ?)
+remplir la matrice $C$ représentant la distance d'édition entre chaque
+paire de préfixes :
+
 $$C(m,n) = \left \{
 \begin{array}{ll}
   0 & \mbox{ si } m = 0 \land n = 0\\
@@ -303,13 +302,12 @@ mais ne peut pas les compenser. Pour cela il faudrait utiliser la
 méthode des bounding-box adaptatives permettant une meilleur
 correspondance entre les bounding box.\\
 
-La complexité de l'algorithme de Levenshtein est avec l'implémentation
-classique en $O(NM)$ avec $N$ et $M$ les tailles des deux
-chaînes. Cependant un fort surcoût apparaît à cause du calcul des
-différents poids et notamment de w. L'image~\ref{fig:recap} présente un schéma
-récapitulatif de la méthode.
-% FIXME: @Pierre : L'algorithme de Levenshtein est toujours en
-% O(MN). Seul la consommation mémoir peut être réduite.
+La complexité de l'algorithme de Levenshtein est de $O(NM)$ avec $N$
+et $M$ les tailles des deux chaînes. Cependant un fort surcoût
+apparaît à cause du calcul des différents poids et notamment de
+w. L'image~\ref{fig:recap} présente un schéma récapitulatif de la
+méthode.
+
 \begin{figure}
   \hspace{-10em}
   \includegraphics[scale=.6]{figrecap.png}
