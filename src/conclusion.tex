@@ -1,15 +1,21 @@
 En conclusion, la reconnaissance d'empreinte digitales est une méthode
 qui obtient de très bons résultats. Dans la partie
 \ref{sec:performances}, on voit que l'on peut obtenir un taux de vrai
-acceptation de 97.6\% avec la méthode des Minutia. Il s'agit là de la
-meilleure implémentation trouvée.
+acceptation de 97.6\% avec la méthode des Minutia. D'autres méthodes
+plus compliquées existent obtenant de meilleur performances mais sont
+souvent plus coûteuses.\\
 
-FIXME!!: Besoin d'ajouter des informations de ceux qui ont écrit les
-méthodes\ldots
+La méthode de calcul de similarité entre deux minutiae présenté repose
+sur la distance d'édition entre deux chaînes de caractères qui est une
+méthode classique et très étudié. Toute l'élégance de la méthode est
+la transformation des informations de crêtes en chaînes de caractères
+pouvant facilement êtres comparées. La comparaison sur une base de
+données présenté dans la section~\ref{sec:performances} montre que
+cette méthode donne de bons résultats.\\
 
 Si nous avions à implémenter la méthode qui nous donnerait les
 meilleures performances, nous choisirions celle des Minutia. Cependant
-c'est la méthode la plus difficile à implémenter, car il fait détecter
+c'est la méthode la plus difficile à implémenter, car il faut détecter
 les Minutia, les épurer, puis le travail de reconnaissance commence,
 tandis que dans la méthode basée sur la corrélation FIXME.
 
