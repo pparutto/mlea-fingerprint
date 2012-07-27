@@ -71,7 +71,60 @@ Pierre \textsc{Parutto}\\
 \input{src/problemes}
 
 \chapter{Correlation-based}
-\chapter{Minuatiae Based}
+
+Cette première méthode que nous allons traiter est une méthode
+relativement simple puisqu'elle ne nécessite pas d'extraction de
+caractéristiques. Ceci a l'avantage d'être moins coûteux en temps et
+permet d'éviter comme on le verra d'extraire de mauvaises
+caractéristiques (comme par exemple de fausses minutiae).
+
+\section{Cross-correlation}
+
+La cross-correlation est une mesure de similarité entre 2 images.
+Elle est définie comme suit:
+$$CC(f,t) = \frac{1}{n-1}\sum_{x,y}\frac{(f(x,y) - \bar{f})(t(x,y) - \bar{t})}{\sigma_f\sigma_t}$$
+Où :
+\begin{itemize}
+  \item f et t sont des images
+  \item $\bar{f}$ et $\bar{t}$ sont les valeurs moyennes des images
+  \item $\sigma_f$ et $\sigma_t$ sont les variances des images
+\end{itemize}
+Cette mesure va nous permettre de mesurer la similarité entre 2 empreintes digitales.
+
+\section{Algorithme}
+
+L'idée de l'algorithme et de calculer directement la similarité entre
+2 images d'empreinte digitale en niveau de gris. Pour que cette
+méthode soit un minimum robuste à la rotation et à la translation nous
+allons calculer la cross-corrélation pour différentes translations et
+rotations effectuées sur l'empreinte à tester.
+
+
+Soit $T$ l'image de l'empreinte de l'identité présumée et
+$I^{(x,y,\theta)}$ l'image à tester translaté de (x,y) et tourné d'un
+angle $\theta$.
+$$S(T,I) = \max_{x,y,\theta} CC(T,I^{(x,y,\theta)})$$
+
+$S(T,I)$ correspond au score, pour prendre une décision il suffit de
+seuiller ce score par un seuil $\Delta$.
+\begin{itemize}
+  \item Si $S(T,I) > \Delta$ : Accepté
+  \item Sinon : Rejeté
+\end{itemize}
+
+\section{Discuss}
+
+Cette méthode, bien que simple à implémenter, n'est pas robuste à la
+plupart des problèmes d'acquisition décris dans la première partie. En
+effet la similarité donc le score dépendra de la luminosité, de
+l'élasticité du doigt, de la pression etc..
+
+De plus, cette méthode est très coûteuse : Pour $\theta$ variant de
+-90 à 90 et $x$ et $y$ variant de -200 à 200. Il faudra calculer $401*401*181 = 29104981$ cross-corrélations.
+
+Une solution pour ces problèmes est d'effectuer des corrélations locales en utilisant les minutiae.
+
+\chapter{Minutiae Based}
 
 La seconde méthode que nous allons traiter dans cet état de l'art est
 la méthode basé sur l'extraction des minutia (ou minutiaes) sur les
