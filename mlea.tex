@@ -77,25 +77,76 @@ La seconde méthode que nous allons traiter dans cet état de l'art est
 la méthode basé sur l'extraction des minutia (ou minutiaes) sur les
 empreintes digitales. Chaque empreinte comporte un certain nombre de
 défaut, appelés minutiaes. Ces défauts sont unique pour chaque
-individue. Cependant, il important de remarque que l'on a une chance
+individu. Cependant, il important de remarquer que l'on a une chance
 sur dix milliards d'avoir des minutia qui peuvent être assez
 ressemblant pour être confondues. Les minutia sont des défauts de
-l'empreinte digitales qui sont définie dès la naissance et qui sont
+l'empreinte digitales qui sont définie dès la naissance et sont
 inchangeable durant la vie entière de l'individu.
 
 Pour effectuer cette technique, il nous faut d'abord extraire un
 maximum de ces défauts pour que la méthode puisse fonctionner d'une
 façon optimale. Dans la seconde partie nous traiterons la méthode
 permettant de valider si deux empreintes appartient bien au même
-individu (et également au même doigt.)
+individu et également au même doigt.
 
-\section{Détection des Minutiae}
+Selon la législation française, un individu peut être reconnut avec
+seulement 12 minutiaes. Une empreinte digitale comporte en moyenne 100
+de ces défauts et les méthodes communes travaillent sur environ 60\%
+des minutiaes présent sur une empreinte digitale. Ainsi, selon la
+législation française il est facile de faire correspondre deux
+empreintes digitales.
 
-Les minutiaes sont classés en divers types selon leurs spécification
-et leurs formes géométrique et la typologies des lignes des
-empreintes. L'A.N.S.I. (pour American Natiional Standards Insitute)
 
-\section{Comparaison des minutiae}
+\section{Détection des Minutiaes}
+
+Les minutiaes sont classés en divers types selon leurs spécifications
+et leurs formes géométrique. Ces défauts ont été classés en cinq
+grands type par l'Ansi (pour American National Standards
+Institute). Les trois types de minutiaes principaux sont la
+terminaison, le branchement et l'intersection. Les autres types de
+minutiaes sont en générales pas détecter car souvent confondues avec
+des erreurs de l'acquisition de l'empreinte ou un pré-traitement non
+favorable à leurs détection. Il faut cependant remarquer que la non
+détection de ces minutiaes n'est pas discriminatoire pour le bon
+fonctionnement de la comparaison de deux empreintes digitales. En
+effet, si on ne considère que les cinq grands types de minutiaes de
+l'Ansi, on arrive à une moyenne de 60 minutiaes par empreintes. Ce
+nombre est donc suffisant pour identifier une personne de façon légale
+en France.
+
+La méthode la plus fiable et donc également la plus utilisé est le
+parcours des lignes présentes sur les empreintes digitales. Afin
+d'utiliser cette méthode il nous faut pré-traiter l'image afin de
+suivre ces lignes.
+
+Il existe deux méthode principales. La première est d'utiliser
+l'empreinte digitale en niveau de gris avec les zones foncés étant les
+lignes des empreintes digitales. Il faut donc détecter les lignes et
+les suivre. Ainsi on peut détecter les terminaisons et les
+bifurcations facile. Une méthode existe en utilisant le gradient de
+l'image. La méthode reste sensiblement la même. Pour pouvoir suivre
+les lignes on cherche dans une fenêtre centré en un point et ayant
+comme dimension la distance locale entre deux lignes de
+l'empreinte. On est donc obligé de calculer localement la distance
+minimale entre deux lignes et  de chercher la direction de la ligne
+que l'on parcourt.
+
+\section{Épuration des minutiaes}
+
+Lorsqu'on fait l'acquisition d'un empreinte digitale, il apparaît que
+les lignes qui sont proches du bords de l'image sont coupé. On va donc
+avoir des terminaisons qui vont être détecté à tort sur ces parties de
+l'image. La solution pour ne plus avoir ce problème est de pas
+considérer tous les minutiaes situées sur le bord de l'empreinte
+digitale. De plus, on ignore tous les minutiaes et pas seulement les
+terminaisons : cette parties de l'image produit beaucoup trop de faux
+positif pour chercher à savoir si la minutiae en est une.
+
+Le deuxième problème majeur est le regroupement de minutiaes.
+
+
+
+\section{Comparaison des minutiaes}
 
 Dans cette étape, on considère en entré deux ensembles: $p =
 \{x_{i}^{p}, y_{i}^{p}, \theta_{i}^{p}\}, i \in \llbracket 1, M
@@ -308,3 +359,7 @@ pour donner un résultat donc nous ne pouvons pas comparer ce critère.
 \bibliography{mlea}
 
 \end{document}
+
+%% mlea.tex end here
+
+%  LocalWords:  American Institute
