@@ -425,7 +425,7 @@ qui vont permettre de mettre en valeur les empreintes digitales (voir \ref{fig:g
 
 \begin{figure}[H]
   \centering\includegraphics{filters.png}
-  \caption{Filtres de Gabor}
+  \caption{Filtres de Gabor : l'image de gauche est l'image à améliorer et l'image de droite est l'image améliorée par les Filtres de Gabor}
   \label{fig:gabor}
 \end{figure}
 
@@ -438,6 +438,22 @@ etc..
 \`A partir de l'image binarisé en noir et blanc, on va de nouveau
 extraire les positions des minutiaes pour sélectionner les points
 d'interêt de l'image.
+
+\subsection{Matching}
+
+Maintenant qu'on connaît les points d'interêts de notre image, on va
+pouvoir calculer (en utilisant l'image binarisé) entre chaque minutiae
+de notre image modèle et de notre image à tester une cross-corrélation
+locale (c'est à dire dans les pixels voisins de la minutiae) et si la
+cross-corrélation est supérieur à un certain seuil alors on va
+admettre que les minutiae correspondent.
+
+\subsection{Discuss}
+
+Cette algorithme est moins coûteux que la cross-corrélation globale et
+n'est pas soumis aux problèmes de luminosité, pression, rotation et
+translation. Il obtient cependant de moins bon résultats que la
+méthode à minutiae vue précedemment.
 
 \chapter{Conclusion}
 
