@@ -407,6 +407,37 @@ pour donner un résultat donc nous ne pouvons pas comparer ce critère.
   \label{fig:res}
 \end{figure}
 
+\chapter{Local correlation-based}
+
+Cette dernière méthode est en quelque sorte une méthode hybride
+puisqu'elle va utiliser à la fois les minutiae et la
+cross-corrélation.
+
+\section{Algorithm}
+
+Le principe reste assez simple : à partir de l'image d'empreinte
+digitale en niveau de gris on va procéder à des pré-traitements.
+
+\subsection{Pré-traitements}
+
+Tout d'abord nous allons appliquer une succession de filtres de Gabor
+qui vont permettre de mettre en valeur les empreintes digitales (voir \ref{gabor})
+
+\begin{figure}
+  \centering\includegraphics[scale=.5]{filters.png}}
+  \caption{Filtres de Gabor}
+  \label{gabor}
+\end{figure}
+
+Puis nous allons binariser l'image.  Ces pré-traitements vont nous
+permettre d'être invariant à la luminosité, à la pression du doigt
+etc..
+
+\subsection{Extraction de caractéristiques}
+
+\`A partir de l'image binarisé en noir et blanc, on va de nouveau
+extraire les positions des minutiaes pour sélectionner les points
+d'interêt de l'image.
 
 \chapter{Conclusion}
 
